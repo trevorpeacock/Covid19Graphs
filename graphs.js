@@ -248,6 +248,7 @@ var drawGraph = function(data) {
     }
 
     baselines = [1, 2, 3, 5, 10];
+    baseline_colours = ['#888', '#999', '#aaa', '#bbb', '#ccc'];
     for(b in baselines) {
         data = [];
         for(var i = 0; i < maxlen; i++) {
@@ -256,8 +257,9 @@ var drawGraph = function(data) {
         }
         datasets.push({ 
             data: data,
-            label: baselines[b],
+            label: 'Double every ' + baselines[b] + ' days',
             lineTension: 0,
+            borderColor: baseline_colours[b],
             fill: false
         })
     }
@@ -282,13 +284,13 @@ var drawGraph = function(data) {
                     },
                     scaleLabel: {
                         display: true,
-                        labelString: 'X Axis'
+                        labelString: 'Days since cases reached 1 per million'
                     }
                 }],
                 yAxes: [{
                     type: 'logarithmic',
                     ticks: {
-                        min: 0,
+                        min: 1,
                         max: 1000,
                          callback: function (value, index, values) {
                              return Number(value.toString());//pass tick values as a string into Number function
@@ -296,7 +298,6 @@ var drawGraph = function(data) {
                     },
                     afterBuildTicks: function (chartObj) { //Build ticks labelling as per your need
                         chartObj.ticks = [];
-                        chartObj.ticks.push(0.1);
                         chartObj.ticks.push(1);
                         chartObj.ticks.push(10);
                         chartObj.ticks.push(100);
@@ -304,7 +305,7 @@ var drawGraph = function(data) {
                     },
                     scaleLabel: {
                         display: true,
-                        labelString: 'Cases per million'
+                        labelString: 'Cases per million people'
                     }
                 }]
             },
