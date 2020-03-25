@@ -176,27 +176,35 @@ var locations = {
 
 var locations = {
     'Australia/Australian Capital Territory': {
+        'name': 'ACT',
         'population':426709
     },
     'Australia/New South Wales': {
+        'name': 'NSW',
         'population':8089526
     },
     'Australia/Northern Territory': {
+        'name': 'NT',
         'population':245869
     },
     'Australia/Queensland': {
+        'name': 'QLD',
         'population':5095100
     },
     'Australia/South Australia': {
+        'name': 'SA',
         'population':5095100
     },
     'Australia/Tasmania': {
+        'name': 'Tas',
         'population':534281
     },
     'Australia/Victoria': {
+        'name': 'Vic',
         'population':6594804
     },
     'Australia/Western Australia': {
+        'name': 'WA',
         'population':2621680
     },
 };
@@ -233,12 +241,28 @@ var drawGraph = function(data) {
         }
         datasets.push({ 
             data: data,
-            label: loc,
+            label: locations[loc]['name'],
             borderColor: colorHash.hex(loc),
             fill: false
         })
     }
+
+    baselines = [1, 2, 3, 5, 10];
+    for(b in baselines) {
+        data = [];
+        for(var i = 0; i < maxlen; i++) {
+            var base = Math.pow(2, 1/baselines[b])
+            data.push(Math.pow(base, i));
+        }
+        datasets.push({ 
+            data: data,
+            label: baselines[b],
+            lineTension: 0,
+            fill: false
+        })
+    }
     
+    Chart.defaults.global.elements.line.tension = 0;
     var myChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -249,7 +273,41 @@ var drawGraph = function(data) {
             title: {
               display: true,
               text: 'COVID-19 confirmed cases per million since 1 per million'
-            }
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    ticks: {
+                        beginAtZero: true
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'X Axis'
+                    }
+                }],
+                yAxes: [{
+                    type: 'logarithmic',
+                    ticks: {
+                        min: 0,
+                        max: 1000,
+                         callback: function (value, index, values) {
+                             return Number(value.toString());//pass tick values as a string into Number function
+                         }
+                    },
+                    afterBuildTicks: function (chartObj) { //Build ticks labelling as per your need
+                        chartObj.ticks = [];
+                        chartObj.ticks.push(0.1);
+                        chartObj.ticks.push(1);
+                        chartObj.ticks.push(10);
+                        chartObj.ticks.push(100);
+                        chartObj.ticks.push(1000);
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Cases per million'
+                    }
+                }]
+            },
           }
     });
 }
