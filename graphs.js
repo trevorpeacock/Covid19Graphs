@@ -210,7 +210,7 @@ var locations = {
 };
 
 var populateData = function(data) {
-    lines = data.split('\r\n');
+    lines = data.split('\n');
     for(var line in lines) {
         line = lines[line].split(',');
         var region = line[1];
