@@ -1,0 +1,23 @@
+html, body {
+        width: 100%;
+        margin: 0px;
+        padding: 0px;
+        color: #000000;
+}
+
+div#doubleDays table {
+    border-collapse: collapse;
+}
+
+div#doubleDays table td, div#doubleDays table th {
+    border: 1px solid black;
+}
+
+div#doubleDays table th {
+    vertical-align: bottom;
+}
+
+div#doubleDays table td:nth-child(2),
+div#doubleDays table td:nth-child(3) {
+    text-align: right;
+}
