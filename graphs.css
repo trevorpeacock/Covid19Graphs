@@ -17,6 +17,7 @@ table#doubleDays th {
     vertical-align: bottom;
 }
 
-table#doubleDays td:nth-child(2) {
+table#doubleDays td:nth-child(2),
+table#doubleDays td:nth-child(3) {
     text-align: right;
 }

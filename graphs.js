@@ -342,6 +342,11 @@ drawDoubleTable = function(data) {
                 td.appendChild(text);
                 var td = document.createElement("td");
                 tr.appendChild(td);
+                var text = document.createTextNode(line[line.length-1]);
+                td.appendChild(text);
+                td.appendChild(text);
+                var td = document.createElement("td");
+                tr.appendChild(td);
                 var text = document.createTextNode(val.toFixed(2));
                 td.appendChild(text);
                 break;
