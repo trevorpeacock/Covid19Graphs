@@ -47,17 +47,31 @@ drawDoubleTable = function(data) {
         if(line[line.length-1]=='\r')
             line = line.slice(0, -1);
         line = line.split(',');
+        if(line.length==1) continue;
         if(line[0]=='UID') continue;
-        if(line[4]>56 && line[4]<1000) continue;
-        if(line[4]>77777) continue;
+        if(line[4]<1000) continue;
+        if(line[4]>80000 && line[4]<90000) continue;
+        if(line[4]>91000) continue;
         if(line[4]=="") continue;
         if(line[5]=="Unassigned") {
             states[line[6]] = {
                 'data':intArray(line.slice(13)),
                 'province':{}
             }
-            console.log(line[6], states[line[6]]['data'][states[line[6]]['data'].length-1]);
-        } else {
+        }
+    }
+    for(var line in lines) {
+        line = lines[line];
+        if(line[line.length-1]=='\r')
+            line = line.slice(0, -1);
+        line = line.split(',');
+        if(line.length==1) continue;
+        if(line[0]=='UID') continue;
+        if(line[4]<1000) continue;
+        if(line[4]>80000 && line[4]<90000) continue;
+        if(line[4]>91000) continue;
+        if(line[4]=="") continue;
+        if(line[5]!="Unassigned") {
             states[line[6]]['province'][line[5]] = {
                 'data':intArray(line.slice(13)),
             }
