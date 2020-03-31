@@ -5,3 +5,18 @@ html, body {
         color: #000000;
 }
 
+table#doubleDays {
+    border-collapse: collapse;
+}
+
+table#doubleDays td, table#doubleDays th {
+    border: 1px solid black;
+}
+
+table#doubleDays th {
+    vertical-align: bottom;
+}
+
+table#doubleDays td:nth-child(2) {
+    text-align: right;
+}

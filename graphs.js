@@ -316,17 +316,50 @@ var drawGraph = function(data) {
     });
 }
 
+drawDoubleTable = function(data) {
+    var table = document.getElementById('doubleDays');
+    lines = data.split('\n');
+    for(var line in lines) {
+        line = lines[line];
+        if(line[line.length-1]=='\r')
+            line = line.slice(0, -1);
+        line = line.split(',');
+        var region = line[1];
+        if(line[0]!='')
+            region = line[1] + '/' + line[0];
+        line = line.slice(4);
+        if(!(region in locations))
+            continue;
+        var target = line[line.length-1]/2
+        for(var i = 0; ; i++) {
+            if(line[line.length-i-1] < target) {
+                var val = i-1 + (line[line.length-i]-target)/(line[line.length-i]-line[line.length-i-1]);
+                var tr = document.createElement("tr");
+                table.appendChild(tr);
+                var td = document.createElement("td");
+                tr.appendChild(td);
+                var text = document.createTextNode(locations[region]['name']);
+                td.appendChild(text);
+                var td = document.createElement("td");
+                tr.appendChild(td);
+                var text = document.createTextNode(val.toFixed(2));
+                td.appendChild(text);
+                break;
+            }
+        }
+    }
+
+}
+
 window.onload = function() {
+    var client = new XMLHttpRequest();
 
-var client = new XMLHttpRequest();
-
-client.open('GET', 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv');
-//client.open('GET', 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv');
-client.onreadystatechange = function() {
-  if(client.readyState!=4) return;
-  drawGraph(client.responseText);
+    client.open('GET', 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv');
+    //client.open('GET', 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv');
+    client.onreadystatechange = function() {
+        if(client.readyState!=4) return;
+        drawGraph(client.responseText);
+        drawDoubleTable(client.responseText);
+    }
+    client.send();
 }
-client.send();
-}
-
-
