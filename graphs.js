@@ -1,179 +1,3 @@
-
-
-var locations = {
-    'US/Washington': {
-        'population':426709
-    },
-    'US/New York': {
-        'population':426709
-    },
-    'US/California': {
-        'population':426709
-    },
-    'US/Massachusetts': {
-        'population':426709
-    },
-    'US/Grand Princess': {
-        'population':426709
-    },
-    'US/Georgia': {
-        'population':426709
-    },
-    'US/Colorado': {
-        'population':426709
-    },
-    'US/Florida': {
-        'population':426709
-    },
-    'US/New Jersey': {
-        'population':426709
-    },
-    'US/Oregon': {
-        'population':426709
-    },
-    'US/Texas': {
-        'population':426709
-    },
-    'US/Illinois': {
-        'population':426709
-    },
-    'US/Pennsylvania': {
-        'population':426709
-    },
-    'US/Iowa': {
-        'population':426709
-    },
-    'US/Maryland': {
-        'population':426709
-    },
-    'US/North Carolina': {
-        'population':426709
-    },
-    'US/South Carolina': {
-        'population':426709
-    },
-    'US/Tennessee': {
-        'population':426709
-    },
-    'US/Virginia': {
-        'population':426709
-    },
-    'US/Arizona': {
-        'population':426709
-    },
-    'US/Indiana': {
-        'population':426709
-    },
-    'US/Kentucky': {
-        'population':426709
-    },
-    'US/District of Columbia': {
-        'population':426709
-    },
-    'US/Nevada': {
-        'population':426709
-    },
-    'US/New Hampshire': {
-        'population':426709
-    },
-    'US/Minnesota': {
-        'population':426709
-    },
-    'US/Nebraska': {
-        'population':426709
-    },
-    'US/Ohio': {
-        'population':426709
-    },
-    'US/Rhode Island': {
-        'population':426709
-    },
-    'US/Wisconsin': {
-        'population':426709
-    },
-    'US/Connecticut': {
-        'population':426709
-    },
-    'US/Hawaii': {
-        'population':426709
-    },
-    'US/Oklahoma': {
-        'population':426709
-    },
-    'US/Utah': {
-        'population':426709
-    },
-    'US/Kansas': {
-        'population':426709
-    },
-    'US/Louisiana': {
-        'population':426709
-    },
-    'US/Missouri': {
-        'population':426709
-    },
-    'US/Vermont': {
-        'population':426709
-    },
-    'US/Alaska': {
-        'population':426709
-    },
-    'US/Arkansas': {
-        'population':426709
-    },
-    'US/Delaware': {
-        'population':426709
-    },
-    'US/Idaho': {
-        'population':426709
-    },
-    'US/Maine': {
-        'population':426709
-    },
-    'US/Michigan': {
-        'population':426709
-    },
-    'US/Mississippi': {
-        'population':426709
-    },
-    'US/Montana': {
-        'population':426709
-    },
-    'US/New Mexico': {
-        'population':426709
-    },
-    'US/North Dakota': {
-        'population':426709
-    },
-    'US/South Dakota': {
-        'population':426709
-    },
-    'US/West Virginia': {
-        'population':426709
-    },
-    'US/Wyoming': {
-        'population':426709
-    },
-    'US/Alabama': {
-        'population':426709
-    },
-    'US/Puerto Rico': {
-        'population':426709
-    },
-    'US/Guam': {
-        'population':426709
-    },
-    'US/Virgin Islands': {
-        'population':426709
-    },
-    'US/United States Virgin Islands': {
-        'population':426709
-    },
-    'US/US': {
-        'population':426709
-    },
-};
-
 var locations = {
     'Australia/Australian Capital Territory': {
         'name': 'ACT',
@@ -216,6 +40,7 @@ var populateData = function(data) {
         if(line[line.length-1]=='\r')
             line = line.slice(0, -1);
         line = line.split(',');
+        console.log(line);
         var region = line[1];
         if(line[0]!='')
             region = line[1] + '/' + line[0];
@@ -226,6 +51,7 @@ var populateData = function(data) {
             line = line.slice(1);
         locations[region]['days_since_1ppm'] = line;
     }
+    console.log(locations);
 }
 
 var drawGraph = function(data) {

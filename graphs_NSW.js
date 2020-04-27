@@ -6,28 +6,6 @@ var datemillis_to_day = function(m) {
     return m/1000/3600/24-18283;
 }
 
-calculatorDaysToDouble = function(data) {
-    var target = data[data.length-1]/2;
-    if(target==0) return '-'
-    if(target<4) return '-'
-    for(var i = 0; ; i++) {
-        if(data[data.length-i-1] < target) {
-            var val = i-1 + (data[data.length-i]-target)/(data[data.length-i]-data[data.length-i-1]);
-            return val.toFixed(2);
-        }
-    }
-}
-
-var calculateCumulative = function(data) {
-    d = [];
-    total = 0;
-    for(var i=0; i<data.length; i++) {
-        total += parseInt(data[i]);
-        d.push(total);
-    }
-    return d;
-}
-
 var populateData = function(data) {
     lines = data.split('\n');
     for(var line in lines) {
@@ -56,8 +34,8 @@ var populateData = function(data) {
         for(var i=0; i<raw_data.length; i++) {
             data[raw_data[i][0]]++;
         }
-        locations[pc]={'raw_data': raw_data, 'data':calculateCumulative(data)};
-        locations[pc]['days_to_double']=calculatorDaysToDouble(locations[pc]['data']);
+        locations[pc]={'raw_data': raw_data, 'data':new TimeSeries_from_daily(data)};
+        locations[pc]['days_to_double']=locations[pc]['data'].days_to_double();
     }
 }
 
@@ -91,7 +69,7 @@ drawTable = function(data) {
         td.appendChild(text);
         var td = document.createElement("td");
         tr.appendChild(td);
-        var text = document.createTextNode(line['data'][line['data'].length-1]);
+        var text = document.createTextNode(line['data'].data[line['data'].data.length-1]);
         td.appendChild(text);
         td.appendChild(text);
         var td = document.createElement("td");
