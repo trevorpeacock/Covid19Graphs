@@ -242,6 +242,7 @@ var drawGraph = function(data) {
         for(var i in locations[loc]['days_since_1ppm']) {
             data.push(1000000*locations[loc]['days_since_1ppm'][i]/locations[loc]['population']);
         }
+        console.log(data);
         datasets.push({ 
             data: data,
             label: locations[loc]['name'],
