@@ -23,6 +23,9 @@ class TimeSeries {
             }
         }
     })
+    current() {
+        return this.data[this.data.length-1];
+    }
 }
 
 class TimeSeries_from_daily extends TimeSeries {

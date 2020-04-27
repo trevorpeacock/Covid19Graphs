@@ -54,8 +54,10 @@ drawTable = function(data) {
             if(d=='-') return 100000;
             return d;
         }
-        if(process_dtd(locations[a]['data'].days_to_double())<process_dtd(locations[b]['data'].days_to_double())) return -1;
-        if(process_dtd(locations[a]['data'].days_to_double())>process_dtd(locations[b]['data'].days_to_double())) return 1;
+        if(process_dtd(locations[a].data.days_to_double())<process_dtd(locations[b].data.days_to_double())) return -1;
+        if(process_dtd(locations[a].data.days_to_double())>process_dtd(locations[b].data.days_to_double())) return 1;
+        if(locations[a].data.current()<locations[b].data.current()) return 1;
+        if(locations[a].data.current()>locations[b].data.current()) return -1;
         return 0;
     });
     for(var pc in sorted_locations) {
@@ -68,12 +70,12 @@ drawTable = function(data) {
         td.appendChild(text);
         var td = document.createElement("td");
         tr.appendChild(td);
-        var text = document.createTextNode(line['data'].data[line['data'].data.length-1]);
+        var text = document.createTextNode(line.data.current());
         td.appendChild(text);
         td.appendChild(text);
         var td = document.createElement("td");
         tr.appendChild(td);
-        var text = document.createTextNode(line['data'].days_to_double());
+        var text = document.createTextNode(line.data.days_to_double());
         td.appendChild(text);
     }
 }
