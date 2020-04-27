@@ -1,8 +1,18 @@
+function caching(wrapped) {
+    var cached_val;
+    return function() {
+        if(cached_val==undefined) {
+            cached_val = wrapped.apply(this, arguments);
+        }
+        return cached_val;
+    }
+}
+
 class TimeSeries {
     constructor(data) {
         this.data = data;
     }
-    days_to_double() {
+    days_to_double = caching(function() {
         var target = this.data[this.data.length-1]/2;
         if(target==0) return '-'
         if(target<4) return '-'
@@ -12,7 +22,7 @@ class TimeSeries {
                 return val.toFixed(2);
             }
         }
-    }
+    })
 }
 
 class TimeSeries_from_daily extends TimeSeries {
