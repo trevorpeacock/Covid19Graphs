@@ -1,43 +1,6 @@
 
 states = {}
 
-calculatorDaysToDouble = function(data) {
-    var target = data[data.length-1]/2;
-    if(target==0) return '-'
-    if(target<4) return '-'
-    for(var i = 0; ; i++) {
-        if(data[data.length-i-1] < target) {
-            var val = i-1 + (data[data.length-i]-target)/(data[data.length-i]-data[data.length-i-1]);
-            return val.toFixed(2);
-        }
-    }
-}
-
-var calculateCumulative = function(data) {
-    d = [];
-    total = 0;
-    for(var i=0; i<data.length; i++) {
-        total += parseInt(data[i]);
-        d.push(total);
-    }
-    return d;
-}
-
-var intArray = function(data) {
-    d = [];
-    for(var i=0; i<data.length; i++) {
-        d.push(parseInt(data[i]));
-    }
-    return d;
-}
-
-var addArrays = function(d1, d2) {
-    d = [];
-    for(var i=0; i<d1.length; i++) {
-        d.push(d1[i]+d2[i]);
-    }
-    return d;
-}
 
 drawDoubleTable = function(data) {
     var div = document.getElementById('doubleDays');
@@ -55,7 +18,7 @@ drawDoubleTable = function(data) {
         if(line[4]=="") continue;
         if(line[5]=="Unassigned") {
             states[line[6]] = {
-                'data':intArray(line.slice(13)),
+                'data':new TimeSeries(line.slice(13)),
                 'province':{}
             }
         }
@@ -73,9 +36,9 @@ drawDoubleTable = function(data) {
         if(line[4]=="") continue;
         if(line[5]!="Unassigned") {
             states[line[6]]['province'][line[5]] = {
-                'data':intArray(line.slice(13)),
+                'data':new TimeSeries(line.slice(13)),
             }
-            states[line[6]]['data'] = addArrays(states[line[6]]['data'], states[line[6]]['province'][line[5]]['data'])
+            states[line[6]]['data'].add(states[line[6]]['province'][line[5]]['data']);
         }
     }
     var table = document.createElement("table");
@@ -94,7 +57,9 @@ drawDoubleTable = function(data) {
     tr.appendChild(td);
     var text = document.createTextNode('Days to double');
     td.appendChild(text);
-    for(var state in states) {
+    var sorted_states = sorted_locations(states);
+    for(var state_id in sorted_states) {
+        var state = sorted_states[state_id];
         var tr = document.createElement("tr");
         table.appendChild(tr);
         var td = document.createElement("td");
@@ -103,11 +68,11 @@ drawDoubleTable = function(data) {
         td.appendChild(text);
         var td = document.createElement("td");
         tr.appendChild(td);
-        var text = document.createTextNode(states[state]['data'][states[state]['data'].length-1]);
+        var text = document.createTextNode(states[state]['data'].current());
         td.appendChild(text);
         var td = document.createElement("td");
         tr.appendChild(td);
-        var text = document.createTextNode(calculatorDaysToDouble(states[state]['data']));
+        var text = document.createTextNode(states[state]['data'].days_to_double());
         td.appendChild(text);
     }
 
@@ -133,7 +98,9 @@ drawDoubleTable = function(data) {
         tr.appendChild(td);
         var text = document.createTextNode('Days to double');
         td.appendChild(text);
-        for(var prov in states[state]['province']) {
+        var sorted_provinces = sorted_locations(states[state]['province']);
+        for(var prov_id in sorted_provinces) {
+            var prov = sorted_provinces[prov_id];
             var tr = document.createElement("tr");
             table.appendChild(tr);
             var td = document.createElement("td");
@@ -142,12 +109,16 @@ drawDoubleTable = function(data) {
             td.appendChild(text);
             var td = document.createElement("td");
             tr.appendChild(td);
-            var text = document.createTextNode(states[state]['province'][prov]['data'][states[state]['province'][prov]['data'].length-1]);
+            var text = document.createTextNode(states[state]['province'][prov]['data'].current());
             td.appendChild(text);
             var td = document.createElement("td");
             tr.appendChild(td);
-            var text = document.createTextNode(calculatorDaysToDouble(states[state]['province'][prov]['data']));
+            var text = document.createTextNode(states[state]['province'][prov]['data'].days_to_double());
             td.appendChild(text);
+            /*var td = document.createElement("td");
+            tr.appendChild(td);
+            var text = document.createTextNode(states[state]['province'][prov]['data'].changerate());
+            td.appendChild(text);*/
         }
     }
 
