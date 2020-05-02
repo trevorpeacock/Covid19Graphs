@@ -146,6 +146,7 @@ var drawGraph = function() {
 drawDoubleTable = function() {
     var table = document.getElementById('doubleDays');
     var sorted_states = sorted_locations(locations);
+    //sorted_states=['Australia/New South Wales'];
     for(var loc_id in sorted_states) {
         var loc = sorted_states[loc_id];
         var tr = document.createElement("tr");
@@ -163,8 +164,14 @@ drawDoubleTable = function() {
         tr.appendChild(td);
         var text = document.createTextNode(locations[loc]['data'].days_to_double());
         td.appendChild(text);
+        var td = document.createElement("td");
+        tr.appendChild(td);
+        //var text = document.createTextNode(locations[loc]['data'].changerate());
+        //td.appendChild(text);
+        //console.log(loc);
+        td.appendChild(drawChangeRateGraph(locations[loc]['data']));
+        //console.log(locations[loc]['data'].data.splice(locations[loc]['data'].data.length-6));
     }
-
 }
 
 window.onload = function() {

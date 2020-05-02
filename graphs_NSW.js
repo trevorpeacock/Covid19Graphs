@@ -77,10 +77,11 @@ drawTable = function(data) {
         tr.appendChild(td);
         var text = document.createTextNode(line.data.days_to_double());
         td.appendChild(text);
-        //var td = document.createElement("td");
-        //tr.appendChild(td);
+        var td = document.createElement("td");
+        tr.appendChild(td);
         //var text = document.createTextNode(line.data.changerate());
         //td.appendChild(text);
+        td.appendChild(drawChangeRateGraph(line.data));
     }
 }
 

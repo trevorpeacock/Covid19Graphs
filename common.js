@@ -1,11 +1,24 @@
 function caching(wrapped) {
     var cached_val;
     return function() {
+        //console.log(cached_val, wrapped);
         if(cached_val==undefined) {
             cached_val = wrapped.apply(this, arguments);
         }
         return cached_val;
     }
+}
+
+function sum(l) {
+    var total = 0;
+    for(var i=0; i<l.length; i++) {
+        total += l[i];
+    }
+    return total;
+}
+
+function average(l) {
+    return sum(l)/l.length;
 }
 
 class TimeSeries {
@@ -15,13 +28,16 @@ class TimeSeries {
             this.data.push(parseInt(data[i]));
         }
     }
-    daily_increase = caching(function() {
+    daily_increase = (function() {//caching
+        if(this.daily_increase_cache!=undefined) return this.daily_increase_cache.slice();
         var d = [];
         var previous = 0;
         for(var i=0; i<this.data.length; i++) {
             d.push(this.data[i] - previous);
             previous = this.data[i];
         }
+        //console.log(this.data, d);
+        this.daily_increase_cache = d;
         return d;
     });
     days_to_double = caching(function() {
@@ -34,7 +50,7 @@ class TimeSeries {
                 return val.toFixed(2);
             }
         }
-    })
+    });
     cumulative_value(pos) {
         if(pos<0)
             return this.data[this.data.length-pos];
@@ -48,13 +64,18 @@ class TimeSeries {
     current() {
         return this.data[this.data.length-1];
     }
-    changerate() {
-        var num = (this.increase_value(-3)+this.increase_value(-2)+this.increase_value(-1));
-        var den = (this.increase_value(-6)+this.increase_value(-5)+this.increase_value(-4));
+    changerate(day) {
+        if(day===undefined) day = -1;
+        const days = 1;
+        const previous_days = 10;
+        var num = average(this.daily_increase().splice(-days +day+1, days));
+        var den = average(this.daily_increase().splice(-previous_days +day+1, previous_days-days));
+        //console.log(day, num, den, this.daily_increase().splice(-previous_days +day+1, previous_days-days), this.daily_increase().splice(-days +day+1, days));
+        if(num<0) num=0;
+        if(den<0) den=0;
         if(num==0 && den==0) return 'NoData';
         if(den==0) return 'NewOutbreak';
         if(num==0) return 'NoNewCases';
-        //console.log(num, den, num/den);
         return num/den;
     }
     add(data) {
@@ -94,4 +115,91 @@ sorted_locations = function(loc_list) {
         return 0;
     });
     return sorted_locs;
+}
+
+drawChangeRateGraph = function(data) {
+    const width = 200;
+    const height = 50;
+    var canvas = document.createElement("canvas");
+    canvas.setAttribute("width", width);
+    canvas.setAttribute("height", height);
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#222';
+    ctx.fillRect(0, 0, width, height);
+
+    var divisions = 30;
+    var division_width = width / divisions;
+    var max_height = 1.8;
+    for(var i=-divisions; i<0; i++) {
+        var v = data.changerate(i);
+        if(v=='NoData') continue;
+        if(v=='NewOutbreak') continue;
+        if(v=='NoNewCases') continue;
+        if(v>max_height) max_height = v;
+    }
+    max_height += 0.2;
+    //console.log(max_height);
+
+    for(var i=-divisions; i<0; i++) {
+        var v = data.changerate(i);
+        var x_start = width + (i) * division_width;
+        var x_end = width + (i+1) * division_width;
+        var x = width + (i+0.5) * division_width;
+        var y = height - height*(v / max_height);
+
+        ctx.fillStyle = '#A66';
+        if(v=='NoData')
+            ctx.fillStyle = '#555';
+        if(v=='NewOutbreak')
+            ctx.fillStyle = '#D66';
+        if(v=='NoNewCases')
+            ctx.fillStyle = '#6A6';
+        if(v<1)
+            ctx.fillStyle = '#6A6';
+        ctx.fillRect(x_start, 0, x_end - x_start+1, height);
+    }
+
+
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, height-(height/max_height-1), width, 2);
+
+    for(var i=-divisions; i<0; i++) {
+        var v1 = data.changerate(i-1);
+        var v2 = data.changerate(i);
+        if(v1=='NoData') continue;
+        if(v1=='NewOutbreak') continue;
+        if(v1=='NoNewCases') v1=0;
+        if(v2=='NoData') continue;
+        if(v2=='NewOutbreak') continue;
+        if(v2=='NoNewCases') v2=0;
+        var x1 = width + (i-0.5) * division_width;
+        var y1 = height - height*(v1 / max_height);
+        var x2 = width + (i+0.5) * division_width;
+        var y2 = height - height*(v2 / max_height);
+
+        ctx.strokeStyle = '#fff';
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+    }
+
+    for(var i=-1-divisions; i<0; i++) {
+        var v = data.changerate(i);
+        //console.log(i, data.changerate(i), data.increase_value(i));
+        if(v=='NoData') continue;
+        if(v=='NewOutbreak') continue;
+        if(v=='NoNewCases') v=0;
+        var x_start = width + (i) * division_width;
+        var x_end = width + (i+1) * division_width;
+        var x = width + (i+0.5) * division_width;
+        var y = height - height*(v / max_height);
+
+        ctx.strokeStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, 2 * Math.PI);
+        ctx.stroke();
+    }
+
+    return canvas;
 }

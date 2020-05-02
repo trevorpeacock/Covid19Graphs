@@ -57,6 +57,10 @@ drawDoubleTable = function(data) {
     tr.appendChild(td);
     var text = document.createTextNode('Days to double');
     td.appendChild(text);
+    var td = document.createElement("td");
+    tr.appendChild(td);
+    var text = document.createTextNode('Daily Spread');
+    td.appendChild(text);
     var sorted_states = sorted_locations(states);
     for(var state_id in sorted_states) {
         var state = sorted_states[state_id];
@@ -74,6 +78,11 @@ drawDoubleTable = function(data) {
         tr.appendChild(td);
         var text = document.createTextNode(states[state]['data'].days_to_double());
         td.appendChild(text);
+        var td = document.createElement("td");
+        tr.appendChild(td);
+        //var text = document.createTextNode(states[state]['data'].days_to_double());
+        //td.appendChild(text);
+        td.appendChild(drawChangeRateGraph(states[state]['data']));
     }
 
     for(var state in states) {
@@ -98,6 +107,10 @@ drawDoubleTable = function(data) {
         tr.appendChild(td);
         var text = document.createTextNode('Days to double');
         td.appendChild(text);
+        var td = document.createElement("td");
+        tr.appendChild(td);
+        var text = document.createTextNode('Daily Spread');
+        td.appendChild(text);
         var sorted_provinces = sorted_locations(states[state]['province']);
         for(var prov_id in sorted_provinces) {
             var prov = sorted_provinces[prov_id];
@@ -115,10 +128,11 @@ drawDoubleTable = function(data) {
             tr.appendChild(td);
             var text = document.createTextNode(states[state]['province'][prov]['data'].days_to_double());
             td.appendChild(text);
-            /*var td = document.createElement("td");
+            var td = document.createElement("td");
             tr.appendChild(td);
-            var text = document.createTextNode(states[state]['province'][prov]['data'].changerate());
-            td.appendChild(text);*/
+            //var text = document.createTextNode(states[state]['province'][prov]['data'].changerate());
+            //td.appendChild(text);
+            td.appendChild(drawChangeRateGraph(states[state]['province'][prov]['data']));
         }
     }
 
