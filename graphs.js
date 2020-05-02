@@ -40,22 +40,22 @@ var populateData = function(data) {
         if(line[line.length-1]=='\r')
             line = line.slice(0, -1);
         line = line.split(',');
-        console.log(line);
+        //console.log(line);
         var region = line[1];
         if(line[0]!='')
             region = line[1] + '/' + line[0];
         line = line.slice(4);
         if(!(region in locations))
             continue;
+        locations[region]['data'] = new TimeSeries(line);
         while((line.length>0) && (line[0]<locations[region]['population']/1000000))
             line = line.slice(1);
-        locations[region]['days_since_1ppm'] = line;
+        locations[region]['days_since_1ppm'] = new TimeSeries(line);
     }
-    console.log(locations);
+    //console.log(locations);
 }
 
-var drawGraph = function(data) {
-    populateData(data);
+var drawGraph = function() {
     var ctx = document.getElementById('myChart').getContext('2d');
     
     var colorHash = new ColorHash();
@@ -63,12 +63,12 @@ var drawGraph = function(data) {
     maxlen = 0;
     for(var loc in locations) {
         data = [];
-        if(locations[loc]['days_since_1ppm'].length > maxlen)
-            maxlen = locations[loc]['days_since_1ppm'].length;
-        for(var i in locations[loc]['days_since_1ppm']) {
-            data.push(1000000*locations[loc]['days_since_1ppm'][i]/locations[loc]['population']);
+        if(locations[loc]['days_since_1ppm'].data.length > maxlen)
+            maxlen = locations[loc]['days_since_1ppm'].data.length;
+        for(var i in locations[loc]['days_since_1ppm'].data) {
+            data.push(1000000*locations[loc]['days_since_1ppm'].data[i]/locations[loc]['population']);
         }
-        console.log(data);
+        //console.log(data);
         datasets.push({ 
             data: data,
             label: locations[loc]['name'],
@@ -143,42 +143,26 @@ var drawGraph = function(data) {
     });
 }
 
-drawDoubleTable = function(data) {
+drawDoubleTable = function() {
     var table = document.getElementById('doubleDays');
-    lines = data.split('\n');
-    for(var line in lines) {
-        line = lines[line];
-        if(line[line.length-1]=='\r')
-            line = line.slice(0, -1);
-        line = line.split(',');
-        var region = line[1];
-        if(line[0]!='')
-            region = line[1] + '/' + line[0];
-        line = line.slice(4);
-        if(!(region in locations))
-            continue;
-        var target = line[line.length-1]/2
-        for(var i = 0; ; i++) {
-            if(line[line.length-i-1] < target) {
-                var val = i-1 + (line[line.length-i]-target)/(line[line.length-i]-line[line.length-i-1]);
-                var tr = document.createElement("tr");
-                table.appendChild(tr);
-                var td = document.createElement("td");
-                tr.appendChild(td);
-                var text = document.createTextNode(locations[region]['name']);
-                td.appendChild(text);
-                var td = document.createElement("td");
-                tr.appendChild(td);
-                var text = document.createTextNode(line[line.length-1]);
-                td.appendChild(text);
-                td.appendChild(text);
-                var td = document.createElement("td");
-                tr.appendChild(td);
-                var text = document.createTextNode(val.toFixed(2));
-                td.appendChild(text);
-                break;
-            }
-        }
+    var sorted_states = sorted_locations(locations);
+    for(var loc_id in sorted_states) {
+        var loc = sorted_states[loc_id];
+        var tr = document.createElement("tr");
+        table.appendChild(tr);
+        var td = document.createElement("td");
+        tr.appendChild(td);
+        var text = document.createTextNode(locations[loc]['name']);
+        td.appendChild(text);
+        var td = document.createElement("td");
+        tr.appendChild(td);
+        var text = document.createTextNode(locations[loc]['data'].current());
+        td.appendChild(text);
+        td.appendChild(text);
+        var td = document.createElement("td");
+        tr.appendChild(td);
+        var text = document.createTextNode(locations[loc]['data'].days_to_double());
+        td.appendChild(text);
     }
 
 }
@@ -190,8 +174,9 @@ window.onload = function() {
     //client.open('GET', 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv');
     client.onreadystatechange = function() {
         if(client.readyState!=4) return;
-        drawGraph(client.responseText);
-        drawDoubleTable(client.responseText);
+        populateData(client.responseText);
+        drawGraph();
+        drawDoubleTable();
     }
     client.send();
 }
