@@ -24,16 +24,21 @@ with open('covid-19-tests-by-date-and-location-and-result.csv', newline='') as c
 
 total_series = [0] * ((maxdate-mindate).days + 1)
 
+mindate = datetime.datetime(2020,1,22)
+
 for loc in data:
     series = [0] * ((maxdate-mindate).days + 1)
     for dt in data[loc]:
-        series[(dt-mindate).days]+=1
-        total_series[(dt-mindate).days]+=1
+        day=(dt-mindate).days
+        if day<0: continue
+        series[day]+=1
+        total_series[day]+=1
     data[loc]=series[:-1]
 
 #for loc in data:
 #    print(loc, data[loc][-10:])
 #print(total_series[:-1])
+#print(mindate)
 #print(maxdate)
 with open('covid-19-tests-by-date-and-location-and-result.json', 'w') as jsonfile:
     jsonfile.write(json.dumps(data))
