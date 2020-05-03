@@ -38,8 +38,16 @@ var populateData = function(data) {
     }
 }
 
-drawTable = function(data) {
-    populateData(data);
+var populateData2 = function(data) {
+    data = JSON.parse(data);
+    for(loc in data) {
+        if(loc in locations) {
+            locations[loc]['tests']=data[loc];
+        }
+    }
+}
+
+drawTable = function() {
     //console.log(locations);
     var total=0;
     for(var pc in locations) {
@@ -51,6 +59,7 @@ drawTable = function(data) {
     var sorted_locations = sorted_locations_changerate(locations);
     for(var pc in sorted_locations) {
         var line = locations[sorted_locations[pc]];
+        console.log(line);
         var tr = document.createElement("tr");
         table.appendChild(tr);
         var td = document.createElement("td");
@@ -68,6 +77,10 @@ drawTable = function(data) {
         td.appendChild(text);
         var td = document.createElement("td");
         tr.appendChild(td);
+        var text = document.createTextNode(average(line.tests.splice(-3)).toFixed(2));
+        td.appendChild(text);
+        var td = document.createElement("td");
+        tr.appendChild(td);
         var text = document.createTextNode(line.data.changerate(-1, 4, 14));
         td.appendChild(text);
         var td = document.createElement("td");
@@ -82,7 +95,15 @@ window.onload = function() {
     client.open('GET', 'https://transfer-tp.s3-ap-southeast-2.amazonaws.com/covid-19-cases-by-notification-date-and-postcode-local-health-district-and-local-government-area.csv');
     client.onreadystatechange = function() {
         if(client.readyState!=4) return;
-        drawTable(client.responseText);
+        populateData(client.responseText);
+        var client2 = new XMLHttpRequest();
+        client2.open('GET', 'https://transfer-tp.s3-ap-southeast-2.amazonaws.com/covid-19-tests-by-date-and-location-and-result.json');
+        client2.onreadystatechange = function() {
+            if(client2.readyState!=4) return;
+            populateData2(client2.responseText);
+            drawTable();
+        }
+        client2.send();
     }
     client.send();
 }
