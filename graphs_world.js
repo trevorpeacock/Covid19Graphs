@@ -43,11 +43,11 @@ drawDoubleTable = function() {
         td.appendChild(text);
         var td = document.createElement("td");
         tr.appendChild(td);
-        //var text = document.createTextNode(locations[loc]['data'].changerate());
-        //td.appendChild(text);
-        //console.log(loc);
+        var text = document.createTextNode(locations[loc]['data'].changerate(-1, 4, 14));
+        td.appendChild(text);
+        var td = document.createElement("td");
+        tr.appendChild(td);
         td.appendChild(drawChangeRateGraph(locations[loc]['data']));
-        //console.log(locations[loc]['data'].data.splice(locations[loc]['data'].data.length-6));
     }
 }
 
