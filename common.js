@@ -38,7 +38,7 @@ class TimeSeries {
         }
         //console.log(this.data, d);
         this.daily_increase_cache = d;
-        return d;
+        return d.slice();
     });
     days_to_double = caching(function() {
         var target = this.data[this.data.length-1]/2;
@@ -64,16 +64,17 @@ class TimeSeries {
     current() {
         return this.data[this.data.length-1];
     }
-    changerate(day) {
+    changerate(day, days, previous_days) {
         if(day===undefined) day = -1;
-        const days = 1;
-        const previous_days = 10;
+        if(days===undefined) days = 1;
+        if(previous_days===undefined) previous_days = 10;
         var num = average(this.daily_increase().splice(-days +day+1, days));
         var den = average(this.daily_increase().splice(-previous_days +day+1, previous_days-days));
         //console.log(day, num, den, this.daily_increase().splice(-previous_days +day+1, previous_days-days), this.daily_increase().splice(-days +day+1, days));
         if(num<0) num=0;
         if(den<0) den=0;
         if(num==0 && den==0) return 'NoData';
+        if(num<0) return 'NoNewCases';
         if(den==0) return 'NewOutbreak';
         if(num==0) return 'NoNewCases';
         return num/den;
@@ -110,6 +111,26 @@ sorted_locations = function(loc_list) {
         }
         if(parseFloat(process_dtd(loc_list[a].data.days_to_double()))<parseFloat(process_dtd(loc_list[b].data.days_to_double()))) return -1;
         if(parseFloat(process_dtd(loc_list[a].data.days_to_double()))>parseFloat(process_dtd(loc_list[b].data.days_to_double()))) return 1;
+        if(loc_list[a].data.current()<loc_list[b].data.current()) return 1;
+        if(loc_list[a].data.current()>loc_list[b].data.current()) return -1;
+        return 0;
+    });
+    return sorted_locs;
+}
+
+sorted_locations_changerate = function(loc_list) {
+    var sorted_locs = Object.keys(loc_list);
+    sorted_locs.sort(function(a,b){
+        var process_dtd = function(d) {
+            if(d=='NoNewCases') return 0;
+            if(d=='NoData') return -1;
+            if(d=='NewOutbreak') return 100000;
+            return parseFloat(d);
+        }
+        var va = process_dtd(loc_list[a].data.changerate(-1, 4, 14));
+        var vb = process_dtd(loc_list[b].data.changerate(-1, 4, 14));
+        if(va>vb) return -1;
+        if(va<vb) return 1;
         if(loc_list[a].data.current()<loc_list[b].data.current()) return 1;
         if(loc_list[a].data.current()>loc_list[b].data.current()) return -1;
         return 0;

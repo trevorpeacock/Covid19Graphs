@@ -48,18 +48,7 @@ drawTable = function(data) {
     }
     //console.log(total);
     var table = document.getElementById('doubleDays');
-    var sorted_locations = Object.keys(locations);
-    sorted_locations.sort(function(a,b){
-        var process_dtd = function(d) {
-            if(d=='-') return 100000;
-            return d;
-        }
-        if(process_dtd(locations[a].data.days_to_double())<process_dtd(locations[b].data.days_to_double())) return -1;
-        if(process_dtd(locations[a].data.days_to_double())>process_dtd(locations[b].data.days_to_double())) return 1;
-        if(locations[a].data.current()<locations[b].data.current()) return 1;
-        if(locations[a].data.current()>locations[b].data.current()) return -1;
-        return 0;
-    });
+    var sorted_locations = sorted_locations_changerate(locations);
     for(var pc in sorted_locations) {
         var line = locations[sorted_locations[pc]];
         var tr = document.createElement("tr");
@@ -79,8 +68,10 @@ drawTable = function(data) {
         td.appendChild(text);
         var td = document.createElement("td");
         tr.appendChild(td);
-        //var text = document.createTextNode(line.data.changerate());
-        //td.appendChild(text);
+        var text = document.createTextNode(line.data.changerate(-1, 4, 14));
+        td.appendChild(text);
+        var td = document.createElement("td");
+        tr.appendChild(td);
         td.appendChild(drawChangeRateGraph(line.data));
     }
 }
