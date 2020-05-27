@@ -17,7 +17,10 @@ with open('covid-19-tests-by-date-and-location-and-result.csv', newline='') as c
         if loc=='': loc = 'other'
         if loc not in data:
             data[loc] = []
-        date = datetime.datetime.strptime(line['test_date'], '%Y-%m-%d')
+        try:
+            date = datetime.datetime.strptime(line['test_date'], '%Y-%m-%d')
+        except:
+            date = datetime.datetime.strptime(line['test_date'], '%d/%m/%Y')
         if date < mindate: mindate = date
         if date > maxdate: maxdate = date
         data[loc].append(date)
