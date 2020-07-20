@@ -10,7 +10,7 @@ import json
 mindate = datetime.datetime.now()
 maxdate = datetime.datetime(2020,1,1)
 
-with open('covid-19-tests-by-date-and-location-and-result.csv', newline='') as csvfile:
+with open('covid-19-tests-by-date-and-postcode-local-health-district-and-local-government-area.csv', newline='') as csvfile:
     csvreader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
     for line in csvreader:
         loc = line['lga_name19']
