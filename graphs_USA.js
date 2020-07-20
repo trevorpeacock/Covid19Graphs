@@ -156,6 +156,10 @@ states = {
        'name': 'PA',
        'population':12801989
     },
+    'Puerto Rico': {
+       'name': 'PA',
+       'population':3193694
+    },
     'Rhode Island': {
        'name': 'RI',
        'population':1059361
