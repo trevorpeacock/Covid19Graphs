@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>COVID-19 regional graphs</title>
+<meta charset="utf-8"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI=" crossorigin="anonymous"></script>
+<script src="https://zenozeng.github.io/color-hash/dist/color-hash.js"></script>
+<script src="common.js"></script>
+<script src="graphs2.js"></script>
+<link rel="stylesheet" href="graphs.css">
+</head>
+<body>
+
+<h1>Australian COVID-19 total confirmed cases by state</h1>
+
+<canvas id="myChart" width="400" height="130"></canvas>
+
+<table id="doubleDays">
+    <tr>
+        <th>State</th>
+        <th>Cases</th>
+        <th>Days to Double number<br/>of confirmed cases</th>
+        <th>Daily Spread</th>
+    </tr>
+</table>
+
+<p>
+Notes:
+<ul>
+<li>Graph is logarithmic, moving a point twice as high on the graph represents squaring the value</li>
+<li>The graph compares states by starting each state on the day its number of cases first reached 1 per million people</li>
+<li>Data updated automatically from <a href="https://github.com/CSSEGISandData/COVID-19">Johns Hopkins CSSE</a></li>
+<li>See a similar chart for the whole world <a href="https://ourworldindata.org/grapher/covid-confirmed-cases-per-million-since-1-per-million"> here</a></li>
+</ul>
+</p>
+Source <a href="https://github.com/trevorpeacock/Covid19Graphs">GitHub</a>
+</body>
+</html> 

@@ -48,11 +48,16 @@ var populateData = function(data) {
         if(!(region in locations))
             continue;
         locations[region]['data'] = new TimeSeries(line);
+        line = line.slice(140);
+        for(var i=1; i<line.length; i++)
+            line[i] = line[i]-line[0];
+        line[0]=0;
         while((line.length>0) && (line[0]<locations[region]['population']/1000000))
+        {
             line = line.slice(1);
+        }
         locations[region]['days_since_1ppm'] = new TimeSeries(line);
     }
-    //console.log(locations);
 }
 
 var drawGraph = function() {
@@ -132,6 +137,7 @@ var drawGraph = function() {
                         chartObj.ticks.push(10);
                         chartObj.ticks.push(100);
                         chartObj.ticks.push(1000);
+                        chartObj.ticks.push(10000);
                     },
                     scaleLabel: {
                         display: true,
